@@ -80,37 +80,33 @@ The backup tasks are the following:
 
 - Do a backup of a user's home directory to the backup disk (VFAT partition). Create a compressed archive. Do the files in the archive have a relative path so that you can restore them later to any place?
 
-  **sudo tar -cvzf osboxes-backup.tar.gz /home/osboxes**
+  **- tar -cvzf osboxes-backup.tar.gz /home/osboxes**
+
+  **- zip -r /mnt/backup1/osboxes-backup-zip.zip**
+
+  
 
   **Yes, they have relative path. "tar" don't store absolute paths in this case. We can restore wherever we want.**
 
-  --
-
-  
-
 - List the content of the archive.
 
-  **sudo tar -tvf osboxes-backup.tar.gz**
+  **- tar -tvf osboxes-backup.tar.gz**
 
-  --
-
-  
+  **- unzip -l osboxes-backup-zip.zip**
 
 - Do a restore of the archive to a different place, say `/tmp`.
 
-  **sudo tar -xvzf osboxes-backup.tar.gz -C /tmp/restoreBackup**
+  **- tar -xvzf osboxes-backup.tar.gz -C /tmp/restoreBackup**
 
-  --
-
-  
+  **- unzip /mnt/backup1/osboxes-backup-zip.zip**
 
 - Do an incremental backup that saves only files that were modified after, say, September 23, 2016, 10:42:33. Do this only for `tar`, not for `zip`.
 
   - Use the `find` command to determine the files that should be included in the backup.
   - Use `tar`'s `-T` option to read the names of the files to be archived from a file
 
-  **touch -d "23 Sep 2016 10:42:33" /tmp/backupdate**
+  **- touch -d "23 Sep 2016 10:42:33" /tmp/backupDate**
 
-  **sudo tar -xvf osboxes-backup.tar.gz -C /tmp/restoreBackup**
+  **- find /home/osboxes -newer /tmp/backupDate -type f > /tmp/newFilesToBackup**
 
-  **sudo tar -xvf osboxes-backup.tar.gz -C /tmp/restoreBackup**
+  **- tar -cvf /mnt/backup1/incrementalBackup.tar.gz -T /tmp/newFilesToBackup**
