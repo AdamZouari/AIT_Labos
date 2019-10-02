@@ -69,3 +69,32 @@ You can consult Gentoo Linux Documentation -- Preparing the Disks as a reference
 
 **Here we can see that we have 512 MB for backup1 and 456 MB for backup2 folder. Option -h print the sizes in powers of 1024, which are more readable for us.**
 
+### TASK 2: PERFORM BACKUPS USING TAR AND ZIP
+
+In this task you will perform different backup tasks. For each write a quick reference that you would consult as a system administrator when you have forgotten the exact invocation of the command. Do this using the `tar` command and then using the `zip` command.
+
+The backup tasks are the following:
+
+- Do a backup of a user's home directory to the backup disk (VFAT partition). Create a compressed archive. Do the files in the archive have a relative path so that you can restore them later to any place?
+
+  **tar -cvf osboxes-backup.tar /home/osboxes**
+
+  
+
+- List the content of the archive.
+
+  **tar -tvf osboxes-backup.tar**
+
+- Do a restore of the archive to a different place, say `/tmp`.
+
+  **tar -xvf osboxes-backup.tar -C /tmp**
+
+- Do an incremental backup that saves only files that were modified after, say, September 23, 2016, 10:42:33. Do this only for `tar`, not for `zip`.
+
+  - Use the `find` command to determine the files that should be included in the backup.
+
+    
+
+  - Use `tar`'s `-T` option to read the names of the files to be archived from a file.
+
+    
