@@ -12,18 +12,21 @@ _Authors : Nair Alic & Adam Zouari_
 Which disks and which partitions on these disks are visible?
 
 ![](images/sda-files.png)
+
 **We can see 1 disk (sda) and 5 partitions (sda1/sda2/.../sda5) here.**
 
 Which partitions are mounted? Use the command mount without parameters to find out.
 
 ![](images/partitions-mounted.png)
-**We can see that only sda2, sda3 and sda5 are mounted.**
+
+We can see that only sda2, sda3 and sda5 are mounted.**
 
 2.Attach the disk to your computer.
 
 Consult again the special files in /dev. Which new files appeared? These represent the disk and its partitions you just attached.
 
 ![](images/sdb.png)
+
 **We can see that a new file sdb appeared.**
 
 3.Create a partition table on the disk and create two partitions of equal size using the parted tool.
@@ -77,24 +80,37 @@ The backup tasks are the following:
 
 - Do a backup of a user's home directory to the backup disk (VFAT partition). Create a compressed archive. Do the files in the archive have a relative path so that you can restore them later to any place?
 
-  **tar -cvf osboxes-backup.tar /home/osboxes**
+  **sudo tar -cvzf osboxes-backup.tar.gz /home/osboxes**
+
+  **Yes, they have relative path. "tar" don't store absolute paths in this case. We can restore wherever we want.**
+
+  --
 
   
 
 - List the content of the archive.
 
-  **tar -tvf osboxes-backup.tar**
+  **sudo tar -tvf osboxes-backup.tar.gz**
+
+  --
+
+  
 
 - Do a restore of the archive to a different place, say `/tmp`.
 
-  **tar -xvf osboxes-backup.tar -C /tmp**
+  **sudo tar -xvzf osboxes-backup.tar.gz -C /tmp/restoreBackup**
+
+  --
+
+  
 
 - Do an incremental backup that saves only files that were modified after, say, September 23, 2016, 10:42:33. Do this only for `tar`, not for `zip`.
 
   - Use the `find` command to determine the files that should be included in the backup.
+  - Use `tar`'s `-T` option to read the names of the files to be archived from a file
 
-    
+  **touch -d "23 Sep 2016 10:42:33" /tmp/backupdate**
 
-  - Use `tar`'s `-T` option to read the names of the files to be archived from a file.
+  **sudo tar -xvf osboxes-backup.tar.gz -C /tmp/restoreBackup**
 
-    
+  **sudo tar -xvf osboxes-backup.tar.gz -C /tmp/restoreBackup**
