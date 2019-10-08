@@ -80,9 +80,9 @@ The backup tasks are the following:
 
 - Do a backup of a user's home directory to the backup disk (VFAT partition). Create a compressed archive. Do the files in the archive have a relative path so that you can restore them later to any place?
 
-  **- tar -cvzf osboxes-backup.tar.gz /home/osboxes**
+  **`tar -cvzf osboxes-backup.tar.gz /home/osboxes`**
 
-  **- zip -r /mnt/backup1/osboxes-backup-zip.zip**
+  **`zip -r /mnt/backup1/osboxes-backup-zip.zip`**
 
   
 
@@ -90,23 +90,60 @@ The backup tasks are the following:
 
 - List the content of the archive.
 
-  **- tar -tvf osboxes-backup.tar.gz**
+  **`tar -tvf osboxes-backup.tar.gz`**
 
-  **- unzip -l osboxes-backup-zip.zip**
+  **`unzip -l osboxes-backup-zip.zip`**
 
 - Do a restore of the archive to a different place, say `/tmp`.
 
-  **- tar -xvzf osboxes-backup.tar.gz -C /tmp/restoreBackup**
+  **`tar -xvzf osboxes-backup.tar.gz -C /tmp/restoreBackup`**
 
-  **- unzip /mnt/backup1/osboxes-backup-zip.zip**
+  **`unzip /mnt/backup1/osboxes-backup-zip.zip`**
 
 - Do an incremental backup that saves only files that were modified after, say, September 23, 2016, 10:42:33. Do this only for `tar`, not for `zip`.
 
   - Use the `find` command to determine the files that should be included in the backup.
   - Use `tar`'s `-T` option to read the names of the files to be archived from a file
 
-  **- touch -d "23 Sep 2016 10:42:33" /tmp/backupDate**
+  **`touch -d "23 Sep 2016 10:42:33" /tmp/backupDate`**
 
-  **- find /home/osboxes -newer /tmp/backupDate -type f > /tmp/newFilesToBackup**
+  **`find /home/osboxes -newer /tmp/backupDate -type f > /tmp/newFilesToBackup`**
 
-  **- tar -cvf /mnt/backup1/incrementalBackup.tar.gz -T /tmp/newFilesToBackup**
+  **`tar -cvf /mnt/backup1/incrementalBackup.tar.gz -T /tmp/newFilesToBackup`**
+
+### TASK 3: BACKUP OF FILE METADATA
+
+In this task you will examine how well the backup commands preserve file metadata. Consult the man pages and perform tests using `tar` and `zip` and examine whether you can restore:
+
+- the last modification time
+- the permissions
+- the owner
+
+In the lab report describe the tests you did and their results.
+
+------
+
+We did some tests and here is what we find out for fat32 and ext4 partitions :
+
+We have made few backups using tar and zip. In the table below you'll find out the results made on each partitions. Here we have the results for backup1 which is the **fat32** partition. (If OK it means the metadatas are preserved, NOK means not preserved.)
+
+| Metadata              | TAR  | ZIP  |
+| --------------------- | ---- | ---- |
+| the last modification | OK   | OK   |
+| the permissions       | NOK  | NOK  |
+| the owner             | NOK  | NOK  |
+
+In order to test, we created some files and we changed few things like owner, group before the backup.
+
+Here are the results for backup2 which is on **ext4** partitions :
+
+| Metadata              | TAR  | ZIP  |
+| --------------------- | ---- | ---- |
+| the last modification | OK   | OK   |
+| the permissions       | OK   | OK   |
+| the owner             | NOK  | NOK  |
+
+We can see that the owner always change. The user who untar or unzip the backup becomes the new owner. The last modification time and permissions are kept.
+
+There are options in case we need to keep the owner. For untar the options **--same-owner** will do the job. For unzip the options is **-X**. This is the case on linux filesystems only.
+
