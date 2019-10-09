@@ -85,7 +85,6 @@ The backup tasks are the following:
   **`zip -r /mnt/backup1/osboxes-backup-zip.zip`**
 
   
-
   **Yes, they have relative path. "tar" don't store absolute paths in this case. We can restore wherever we want.**
 
 - List the content of the archive.
@@ -111,6 +110,7 @@ The backup tasks are the following:
 
   **`tar -cvf /mnt/backup1/incrementalBackup.tar.gz -T /tmp/newFilesToBackup`**
 
+
 ### TASK 3: BACKUP OF FILE METADATA
 
 In this task you will examine how well the backup commands preserve file metadata. Consult the man pages and perform tests using `tar` and `zip` and examine whether you can restore:
@@ -121,11 +121,10 @@ In this task you will examine how well the backup commands preserve file metadat
 
 In the lab report describe the tests you did and their results.
 
-------
-
 We did some tests and here is what we find out for fat32 and ext4 partitions :
 
 We have made few backups using tar and zip. In the table below you'll find out the results made on each partitions. Here we have the results for backup1 which is the **fat32** partition. (If OK it means the metadatas are preserved, NOK means not preserved.)
+
 
 | Metadata              | TAR  | ZIP  |
 | --------------------- | ---- | ---- |
@@ -146,4 +145,19 @@ Here are the results for backup2 which is on **ext4** partitions :
 We can see that the owner always change. The user who untar or unzip the backup becomes the new owner. The last modification time and permissions are kept.
 
 There are options in case we need to keep the owner. For untar the options **--same-owner** will do the job. For unzip the options is **-X**. This is the case on linux filesystems only.
+
+### TASK 4: SYMBOLIC AND HARD LINKS
+In this task you will examine whether the backup commands preserve symbolic and hard links. Consult the man pages and perform tests using tar and zip. In the lab report describe the tests you did and their results.
+
+All **FAT** filesystems doesn't support symbolic/hard links so we only tested on the **ext4** partitions :
+
+| Metadata                 | TAR  | ZIP  |
+| ------------------------ | ---- | ---- |
+| hard links 			   | OK   | NOK  |
+| symbolic links           | OK   | NOK  |
+
+We can see that basic zip command don't preserve the links but store the file referred to. For UNIX systems, the **--symlinks** option can be used to preserve only symbolic links. For tar, the links are preserved.
+
+
+
 
