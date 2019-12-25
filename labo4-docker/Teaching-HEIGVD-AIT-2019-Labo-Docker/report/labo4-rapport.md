@@ -195,7 +195,7 @@ which other nodes exist at any given time.
        |-- ...
    ```
    
-   ** You will find the logs folder here :  **
+   ** Here you will find the logs for each task : https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs **
 
 2. Give the answer to the question about the existing problem with the
    current solution.

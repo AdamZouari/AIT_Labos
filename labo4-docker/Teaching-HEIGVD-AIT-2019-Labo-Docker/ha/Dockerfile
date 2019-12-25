@@ -33,7 +33,12 @@ RUN chmod +x /etc/services.d/ha/run
 COPY services/serf /etc/services.d/serf
 RUN chmod +x /etc/services.d/serf/run
 
-# TODO: [Serf] Copy events handler scripts
+# Copy events handler scripts and make them executable
+COPY scripts/member-join.sh /serf-handlers/member-join.sh
+COPY scripts/member-leave.sh /serf-handlers/member-leave.sh
+RUN chmod +x /serf-handlers/member-join.sh
+RUN chmod +x /serf-handlers/member-leave.sh
+
 
 # Copy the haproxy and syslog config
 COPY config/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
