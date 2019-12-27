@@ -6,11 +6,11 @@
 [cont-init.d] done.
 [services.d] starting services
 [services.d] done.
-/opt/bin/serf agent --join ha --replay --event-handler member-join=/serf-handlers/member-join.sh --event-handler member-leave,member-failed=/serf-handlers/member-leave.sh --tag role=balancer monitor -log-level=trace
+/opt/bin/serf agent --join ha --replay --event-handler member-join=/serf-handlers/member-join.sh --event-handler member-leave,member-failed=/serf-handlers/member-leave.sh --tag role=balancer
 ==> Starting Serf agent...
 ==> Starting Serf agent RPC...
 ==> Serf agent running!
-         Node name: 'b1ef01827304'
+         Node name: 'bf821c488308'
          Bind addr: '0.0.0.0:7946'
           RPC addr: '127.0.0.1:7373'
          Encrypted: false
@@ -21,8 +21,8 @@
 
 ==> Log data will now stream in as it occurs:
 
-    2019/12/24 17:15:22 [INFO] agent: Serf agent starting
-    2019/12/24 17:15:22 [INFO] serf: EventMemberJoin: b1ef01827304 192.168.42.2
-    2019/12/24 17:15:22 [INFO] agent: joining: [ha] replay: true
-    2019/12/24 17:15:22 [INFO] agent: joined: 1 nodes
-    2019/12/24 17:15:23 [INFO] agent: Received event: member-join
+    2019/12/27 17:24:03 [INFO] agent: Serf agent starting
+    2019/12/27 17:24:03 [INFO] serf: EventMemberJoin: bf821c488308 192.168.42.2
+    2019/12/27 17:24:03 [INFO] agent: joining: [ha] replay: true
+    2019/12/27 17:24:03 [INFO] agent: joined: 1 nodes
+    2019/12/27 17:24:04 [INFO] agent: Received event: member-join

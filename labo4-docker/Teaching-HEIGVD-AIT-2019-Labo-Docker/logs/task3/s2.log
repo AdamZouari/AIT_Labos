@@ -10,7 +10,7 @@
 ==> Starting Serf agent...
 ==> Starting Serf agent RPC...
 ==> Serf agent running!
-         Node name: '8340478ef310'
+         Node name: 'f702279eb313'
          Bind addr: '0.0.0.0:7946'
           RPC addr: '127.0.0.1:7373'
          Encrypted: false
@@ -21,11 +21,11 @@
 
 ==> Log data will now stream in as it occurs:
 
-    2019/12/25 11:43:02 [INFO] agent: Serf agent starting
-    2019/12/25 11:43:02 [INFO] serf: EventMemberJoin: 8340478ef310 192.168.42.3
-    2019/12/25 11:43:02 [INFO] agent: joining: [ha] replay: true
-    2019/12/25 11:43:02 [INFO] serf: EventMemberJoin: ad6713a23d9f 192.168.42.2
-    2019/12/25 11:43:02 [INFO] agent: joined: 1 nodes
+    2019/12/27 17:25:34 [INFO] agent: Serf agent starting
+    2019/12/27 17:25:34 [INFO] serf: EventMemberJoin: f702279eb313 192.168.42.4
+    2019/12/27 17:25:34 [INFO] agent: joining: [ha] replay: true
+    2019/12/27 17:25:34 [INFO] serf: EventMemberJoin: bf821c488308 192.168.42.2
+    2019/12/27 17:25:34 [INFO] serf: EventMemberJoin: 7e55f2952f13 192.168.42.3
+    2019/12/27 17:25:34 [INFO] agent: joined: 1 nodes
 Application started
-    2019/12/25 11:43:03 [INFO] agent: Received event: member-join
-    2019/12/25 11:43:03 [ERR] agent: Error invoking script '/serf-handlers/member-join.sh': exit status 127
+    2019/12/27 17:25:35 [INFO] agent: Received event: member-join

@@ -195,29 +195,33 @@ which other nodes exist at any given time.
        |-- ...
    ```
    
-   ** Here you will find the logs for each task : https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs **
+   ** You will find the logs for this task [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task2) **
 
-2. Give the answer to the question about the existing problem with the
-   current solution.
+2. Give the answer to the question about the existing problem with the current solution.
+   
+   **In our case there is no existing problem.. We've tried to start HAProxy first and after start s1. No error occurred neither in ha nor in s1. We can also ping s1 from ha.   ** 
+   
+   **HAProxy logs and ping :**
+   
+	![](assets/img/ping-complete-screen.png)
 
-3. Give an explanation on how `Serf` is working. Read the official
-   website to get more details about the `GOSSIP` protocol used in
-   `Serf`. Try to find other solutions that can be used to solve
-   similar situations where we need some auto-discovery mechanism.
+	** s1 logs : **
+	
+	![](assets/img/ping-log-s1.png)
+
+3. Give an explanation on how `Serf` is working. Read the official website to get more details about the `GOSSIP` protocol used in `Serf`. Try to find other solutions that can be used to solve similar situations where we need some auto-discovery mechanism.
+   
+   **According to [github repo](https://github.com/hashicorp/serf), Serf is a decentralized solution for service discovery and orchestration that is lightweight (it uses 5 to 10 MB of resident memory), highly available, and fault tolerant.
+   Serf can notify the rest of the cluster if  a node failure is detected To communicate with other nodes, an efficient and lightweight gossip protocol is used. The Serf agents periodically exchange messages with each other. As an example, HashiCorp (the Serf developpers) made an analogy with a zombie apocalypse : *it starts with one zombie but soon infects everyone*.
+   Consul, Zookeeper and etcd are the most popular alternatives and competitors to Serf.**
 
 
 ### <a name="task-3"></a>Task 3: React to membership changes
 
-> Serf is really simple to use as it lets the user write their own shell
-  scripts to react to the cluster events. In this task we will
-  write the first bits and pieces of the handler scripts we need to build our solution.
-  We will start by just logging members that join the cluster and the members
-  that leave the cluster. We are preparing to solve concretely the issue
-  discovered in [M4](#M4).
+> Serf is really simple to use as it lets the user write their own shell scripts to react to the cluster events. In this task we will write the first bits and pieces of the handler scripts we need to build our solution.
+  We will start by just logging members that join the cluster and the members that leave the cluster. We are preparing to solve concretely the issue discovered in [M4](#M4).
 
-We reached a state where we have nearly all the pieces in place to make the infrastructure
-really dynamic. At the moment, we are missing the scripts that will react to the events
-reported by `Serf`, namely member `leave` or member `join`.
+We reached a state where we have nearly all the pieces in place to make the infrastructure really dynamic. At the moment, we are missing the scripts that will react to the events reported by `Serf`, namely member `leave` or member `join`.
 
 We will start by creating the scripts in [ha/scripts](ha/scripts). So create two files in
 this directory and set them as executable. You can use these commands:
@@ -342,9 +346,11 @@ continue to run.
 
 1. Provide the docker log output for each of the containers:  `ha`, `s1` and `s2`.
    Put your logs in the `logs` directory you created in the previous task.
+   
+   ** You will find the ha, s1 and s2 logs [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task3) **
 
-3. Provide the logs from the `ha` container gathered directly from the `/var/log/serf.log`
-   file present in the container. Put the logs in the `logs` directory in your repo.
+2. Provide the logs from the `ha` container gathered directly from the `/var/log/serf.log` file present in the container. Put the logs in the `logs` directory in your repo.
+   ** You will find the content of the `/var/log/serf.log` file [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task3/serf.log) **
 
 
 ### <a name="task-4"></a>Task 4: Use a template engine to easily generate configuration files

@@ -1,6 +1,6 @@
-#!/usr/bin/with-contenv bash
+#!/usr/bin/env bash
 
-echo "Member leave/join script triggered" >> /var/log/serf.log
+echo "Member leave script triggered" >> /var/log/serf.log
 
 # We iterate over stdin
 while read -a values; do
