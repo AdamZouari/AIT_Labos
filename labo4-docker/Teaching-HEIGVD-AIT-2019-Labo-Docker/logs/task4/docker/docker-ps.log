@@ -1,0 +1,4 @@
+CONTAINER ID        IMAGE                                                COMMAND             CREATED             STATUS              PORTS                                                                                    NAMES
+57d1d1ee78bc        teaching-heigvd-ait-2019-labo-docker_webapp:latest   "/init"             52 minutes ago      Up 51 minutes       3000/tcp, 7373/tcp, 7946/tcp                                                             s2
+81f45205530e        teaching-heigvd-ait-2019-labo-docker_webapp:latest   "/init"             53 minutes ago      Up 53 minutes       3000/tcp, 7373/tcp, 7946/tcp                                                             s1
+3bc2d7d6970d        teaching-heigvd-ait-2019-labo-docker_haproxy         "/init"             About an hour ago   Up About an hour    0.0.0.0:80->80/tcp, 7373/tcp, 0.0.0.0:1936->1936/tcp, 0.0.0.0:9999->9999/tcp, 7946/tcp   ha

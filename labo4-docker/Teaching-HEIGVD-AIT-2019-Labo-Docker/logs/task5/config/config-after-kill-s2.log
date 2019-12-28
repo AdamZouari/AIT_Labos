@@ -106,7 +106,10 @@ backend nodes
 
     # Define the list of nodes to be in the balancing mechanism
     # http://cbonte.github.io/haproxy-dconv/configuration-1.5.html#4-server
-
+    
+    
+        server 609009d102dc 192.168.42.3:3000 check
+        
 
 # Other links you will need later for this lab
 #

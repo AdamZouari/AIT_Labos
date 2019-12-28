@@ -355,224 +355,16 @@ continue to run.
 
 ### <a name="task-4"></a>Task 4: Use a template engine to easily generate configuration files
 
-> We have to generate a new configuration file for the load balancer each time 
-  a web server is added or removed. There are several ways to do this. Here we 
-  choose to go the way of templates. In this task we will put in place a
-  template engine and use it with a basic example. You will not become an expert
-  in template engines but it will give you a taste of how to apply this technique
-  which is often used in other contexts (like web templates, mail templates, ...).
+> We have to generate a new configuration file for the load balancer each time a web server is added or removed. There are several ways to do this. Here we  choose to go the way of templates. In this task we will put in place a template engine and use it with a basic example. You will not become an expert in template engines but it will give you a taste of how to apply this technique which is often used in other contexts (like web templates, mail templates, ...).
   We will be able to solve the issue raised in [M6](#M6).
 
-There are several ways to generate a configuration file from variables
-in a dynamic fashion. In this lab we decided to use `NodeJS` and
-`Handlebars` for the template engine.
+There are several ways to generate a configuration file from variables in a dynamic fashion. In this lab we decided to use `NodeJS` and `Handlebars` for the template engine.
 
-According to Wikipedia:
-
-  > A template engine is a software designed to combine one or more templates
-    with a data model to produce one or more result documents
-
-In our case our template is the `HAProxy` configuration file in which
-we put placeholders written in the template language. Our data model
-is the data provided by the handler scripts of `Serf`. And the
-resulting document coming out of the template engine is a
-configuration file that HA proxy can understand where the placeholders
-have been replaced with the data.
-
-**References**:
-
-  - [NodeJS](https://nodejs.org/en/)
-  - [Handlebars](http://handlebarsjs.com/)
-  - [Template Engine definition](https://en.wikipedia.org/wiki/Template_processor)
-
-To be able to use `Handlebars` as a template engine in our `ha`
-container, we need to install `NodeJS` and `Handlebars`.
-
-To install `NodeJS`, just replace `TODO: [HB] Install NodeJS` by the
-following content:
-
-```
-# Install NodeJS
-RUN curl -sSLo /tmp/node.tar.xz https://nodejs.org/dist/v4.4.4/node-v4.4.4-linux-x64.tar.xz \
-  && tar -C /usr/local --strip-components 1 -xf /tmp/node.tar.xz \
-  && rm -f /tmp/node.tar.xz
-```
-
-We also need to update the base tools installed in the image to be
-able to extract the `NodeJS` archive. So we need to add `xz-utils` to
-the `apt-get install` present above the line `TODO: [HB] Update to
-install required tool to install NodeJS`.
-
-**Remarks**:
-
-  - You probably noticed that we have the webapp image with a `NodeJS`
-    application.  So the image already contains `NodeJS`. We have
-    based our backend image on an existing image that provides an
-    installation of `NodeJS`. In our `ha` image, we take a shortcut
-    and do a manual installation of `NodeJS`.
-
-    This manual install has at least one bad practice: In the original
-    image of `NodeJS` they download of the required files and then
-    check the downloads against a `GPG` signatures. We have skipped
-    this part in our `ha`image, but in practice you should check every
-    download to avoid issues like the `man in the middle` attack.
-
-    You can take a look at the following links if you are interested
-    in this topic:
-
-      - [NodeJS official Dockerfile](https://github.com/nodejs/docker-node/blob/ae9e2d4f04a0fa82261df86fd9556a76cefc020d/6.3/wheezy/Dockerfile#L4-L26)
-      - [GPG](https://en.wikipedia.org/wiki/GNU_Privacy_Guard)
-      - [Man in the middle attack](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
-
-    The other reason why we have to manually install `NodeJS` is that
-    we cannot inherit from two images at the same time. As in our `ha`
-    image we already inherit `FROM` the `haproxy` official image we
-    cannot use the `NodeJS` image at the same time.
-
-    In fact, the `FROM` instruction from Docker works like the Java
-    inheritance model. You can inherit only from one super class at a
-    time. For example, we have the following hierarchy for our HAProxy
-    image.
-
-    <a href="https://github.com/SoftEng-HEIGVD/Teaching-HEIGVD-AIT-2016-Labo-Docker/blob/master/assets/img/image-hierarchy.png">
-      <img src="https://github.com/SoftEng-HEIGVD/Teaching-HEIGVD-AIT-2016-Labo-Docker/raw/master/assets/img/image-hierarchy.png" alt="HAProxy Image Hierarchy" width="600">
-    </a>
-
-    Here is the reference to the Docker documentation of the `FROM` command:
-
-      - [FROM](https://docs.docker.com/engine/reference/builder/#/from)
-
-It's time to install `Handlebars` and a small command line tool
-`handlebars-cmd` to make it work properly. For that replace the `TODO:
-[HB] Install Handlebars and cli` by this Docker instruction:
-
-```
-# Install the handlebars-cmd node module and its dependencies
-RUN npm install -g handlebars-cmd
-```
-
-**Remarks**:
-
-  - [NPM](http://npmjs.org/) is a package manager for `NodeJS`. Like
-    other package managers, one of its tasks is to manage the
-    dependencies of a package. That's the reason why we have to
-    install only `handlebars-cmd`. This package has the `handlebars`
-    package as one of its dependencies.
-
-Now we will update the handler scripts to use `Handlebars`. For the moment, we
-will just play with a simple template. So, first create a file in `ha/config` called
-`haproxy.cfg.hb` with a simple template content. Use the following command for that:
-
-```bash
-echo "Container {{ name }} has joined the Serf cluster with the following IP address: {{ ip }}" >> /ha/config/haproxy.cfg.hb
-```
-
-We need our template present in our `ha` image. We have to add the following
-Docker instructions for that. Let's replace `TODO: [HB] Copy the haproxy configuration template`
-in [ha/Dockerfile](ha/Dockerfile#L32) with the required stuff to:
-
-  1. Have a directory `/config`
-  2. Have the `haproxy.cfg.hb` in it
-
-Then, update the `member-join.sh` script in [ha/scripts](ha/scripts) with the following content:
-
-```bash
-#!/usr/bin/env bash
-
-echo "Member join script triggered" >> /var/log/serf.log
-
-# We iterate over stdin
-while read -a values; do
-  # We extract the hostname, the ip, the role of each line and the tags
-  HOSTNAME=${values[0]}
-  HOSTIP=${values[1]}
-  HOSTROLE=${values[2]}
-  HOSTTAGS=${values[3]}
-
-  echo "Member join event received from: $HOSTNAME with role $HOSTROLE" >> /var/log/serf.log
-
-  # Generate the output file based on the template with the parameters as input for placeholders
-  handlebars --name $HOSTNAME --ip $HOSTIP < /config/haproxy.cfg.hb > /tmp/haproxy.cfg
-done
-```
-
-<a name="ttb"></a>
-Time to build our `ha` image and run it. We will also run `s1` and `s2`. As usual, here
-are the commands to build and run our image and containers:
-
-```bash
-# Remove running containers
-docker rm -f ha s1 s2
-
-# Build the haproxy image
-cd ha
-docker build -t <imageName> .
-
-# Run the HAProxy container
-docker run -d -p 80:80 -p 1936:1936 -p 9999:9999 --network heig --name ha <imageName>
-
-# OR
-docker-compose up --build
-```
-
-**Remarks**:
-
-  - Installing a new util with `apt-get` means building the whole image again as
-    it is in our Docker file. This will take few minutes.
-
-Take the time to retrieve the output file in the `ha` container. Connect to the container:
-
-```bash
-docker exec -ti ha /bin/bash
-```
-
-and get the content from the file (**keep it for deliverables, handle it as you do for the logs**)
-
-```bash
-cat /tmp/haproxy.cfg
-```
-
-After you have inspected the generated file quit the container with `exit`.
-
-Now that we invoke the template engine from the handler script it is
-time to do an end-to-end test. Start the `s1` container, wait a bit,
-then retrieve the `haproxy.cfg` file from the `ha` container to see
-whether it saw `s1` coming up. Then do the same for `s2`:
-
-```bash
-# 1) Run the S1 container
-docker run -d --network heig --name s1 <imageName>
-
-# 2) Connect to the ha container (optional if you have another ssh session)
-docker exec -ti ha /bin/bash
-
-# 3) From the container, extract the content (keep it for deliverables)
-cat /tmp/haproxy.cfg
-
-# 4) Quit the ha container (optional if you have another ssh session)
-exit
-
-# 5) Run the S2 container
-docker run -d --network heig --name s2 <imageName>
-
-# 6) Connect to the ha container (optional if you have another ssh session)
-docker exec -ti ha /bin/bash
-
-# 7) From the container, extract the content (keep it for deliverables)
-cat /tmp/haproxy.cfg
-
-# 8) Quit the ha container
-exit
-```
 
 **Deliverables**:
 
-1. You probably noticed when we added `xz-utils`, we have to rebuild
-   the whole image which took some time. What can we do to mitigate
-   that? Take a look at the Docker documentation on
-   [image layers](https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/#images-and-layers).
-   Tell us about the pros and cons to merge as much as possible of the
-   command. In other words, compare:
+1. You probably noticed when we added `xz-utils`, we have to rebuild the whole image which took some time. What can we do to mitigate that? Take a look at the Docker documentation on [image layers](https://docs.docker.com/engine/userguide/storagedriver/imagesandcontainers/#images-and-layers).
+   Tell us about the pros and cons to merge as much as possible of the command. In other words, compare:
 
   ```
   RUN command 1
@@ -586,26 +378,45 @@ exit
   RUN command 1 && command 2 && command 3
   ```
 
-  There are also some articles about techniques to reduce the image
-  size. Try to find them. They are talking about `squashing` or
-  `flattening` images.
+  There are also some articles about techniques to reduce the image size. Try to find them. They are talking about `squashing` or `flattening` images.
+  
+  **The RUN instruction will execute any commands in a new layer on top of the current image and commit the results. </br>
+  On the one hand, decrease the number of RUN commands will decrease the number of layers and the image size. Moreover, multiple RUN commands can causes caching issues. For example :**
+  ```bash
+  FROM ubuntu:18.04
+RUN apt-get update
+RUN apt-get install -y curl
+```
+** Here the first RUN is done the first time but after it will be cached. Now if we want add a new package like node our image become :** 
+```bash
+  FROM ubuntu:18.04
+RUN apt-get update
+RUN apt-get install -y curl node
+```
+**So it won't update the repo sources and the packages version might be outdated.</br>
+On the other hand, merge RUN commands will ignore the cache for each modification in the line. For example : **
+```bash
+  FROM ubuntu:18.04
+RUN apt-get update && apt-get install -y curl && curl https://www.google.com
+```
+** If we just modify the curl command (now we want curl on heig-vd.ch) and re-build the image it will re-update the version of packages from the repo and re-install curl and finally do the curl.</br>
+Both usages have pro and cons.</br>
+docker-squash is a utility to squash multiple docker layers into one in order to create an image with fewer and smaller layers. It retains Dockerfile commands such as PORT, ENV, etc.. so that squashed images work the same as they were originally built. In addition, deleted files in later layers are actually purged from the image when squashed.
+**
 
-2. Propose a different approach to architecture our images to be able
-   to reuse as much as possible what we have done. Your proposition
-   should also try to avoid as much as possible repetitions between
-   your images.
+2. Propose a different approach to architecture our images to be able to reuse as much as possible what we have done. Your proposition should also try to avoid as much as possible repetitions between your images.
 
-3. Provide the `/tmp/haproxy.cfg` file generated in the `ha` container
-   after each step.  Place the output into the `logs` folder like you
-   already did for the Docker logs in the previous tasks. Three files
-   are expected.
+	**In this lab, we have two images : the haproxy and the webapp. This two images have some commons things. In both of them we have installed Serf, S6 and Node (one by inheritance and one manually). This commons things could be combined in a `super-image` to avoid repetitions. **
+
+3. Provide the `/tmp/haproxy.cfg` file generated in the `ha` container after each step.  Place the output into the `logs` folder like you already did for the Docker logs in the previous tasks. Three files are expected.
    
-   In addition, provide a log file containing the output of the 
-   `docker ps` console and another file (per container) with
-   `docker inspect <container>`. Four files are expected.
+   In addition, provide a log file containing the output of the `docker ps` console and another file (per container) with `docker inspect <container>`. Four files are expected.
    
-4. Based on the three output files you have collected, what can you
-   say about the way we generate it? What is the problem if any?
+   ** You will find the docker outputs and logs [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task4) **
+   
+4. Based on the three output files you have collected, what can you say about the way we generate it? What is the problem if any?
+
+	** TODO, pas compris**
 
 
 ### <a name="task-5"></a>Task 5: Generate a new load balancer configuration when membership changes
@@ -629,8 +440,7 @@ At this stage, we have:
   - A template engine in the `ha` image is ready to be used to
     generate the HAProxy configuration file.
 
-Now, we need to refine our `join` and `leave` scripts to generate a
-proper HAProxy configuration file.
+Now, we need to refine our `join` and `leave` scripts to generate a proper HAProxy configuration file.
 
 First, we will copy/paste the content of the
 [ha/config/haproxy.cfg](ha/config/haproxy.cfg) file into the template
@@ -825,27 +635,26 @@ tasks**)
 
 **Deliverables**:
 
-1. Provide the file `/usr/local/etc/haproxy/haproxy.cfg` generated in
-   the `ha` container after each step. Three files are expected.
+1. Provide the file `/usr/local/etc/haproxy/haproxy.cfg` generated in the `ha` container after each step. Three files are expected.
+   
+   ** You will find the docker outputs, list of files of `/nodes` folder and config files [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task5/) **
    
    In addition, provide a log file containing the output of the 
    `docker ps` console and another file (per container) with
    `docker inspect <container>`. Four files are expected.
 
+	** Idem.**
 2. Provide the list of files from the `/nodes` folder inside the `ha` container.
    One file expected with the command output.
-
-3. Provide the configuration file after you stopped one container and
-   the list of nodes present in the `/nodes` folder. One file expected
-   with the command output. Two files are expected.
    
-    In addition, provide a log file containing the output of the 
-   `docker ps` console. One file expected.
+  	** Idem.**
 
-4. (Optional:) Propose a different approach to manage the list of backend
-   nodes. You do not need to implement it. You can also propose your
-   own tools or the ones you discovered online. In that case, do not
-   forget to cite your references.
+3. Provide the configuration file after you stopped one container and the list of nodes present in the `/nodes` folder. One file expected with the command output. Two files are expected.
+   
+    In addition, provide a log file containing the output of the `docker ps` console. One file expected.
+
+	** Idem.**
+
 
 ### <a name="task-6"></a>Task 6: Make the load balancer automatically reload the new configuration
 
