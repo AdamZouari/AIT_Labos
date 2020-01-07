@@ -7,13 +7,13 @@ __Authors : Nair Alic & Adam Zouari__
 1. [Introduction](#intro)
 2. [Tasks](#tasks)
 
-	0 - [Identify issues and install the tools](#task-0)
-	1 - [Add a process supervisor to run several processes](#task-1)
-	2 - [Add a tool to manage membership in the web server cluster](#task-2)
-	3 - [React to membership changes](#task-3)
-	4 - [Use a template engine to easily generate configuration files](#task-4)
-	5 - [Generate a new load balancer configuration when membership changes](#task-5)
-	6 - [Make the load balancer automatically reload the new configuration](#task-6)
+	0 - [Identify issues and install the tools](#task-0)</br>
+	1 - [Add a process supervisor to run several processes](#task-1)</br>
+	2 - [Add a tool to manage membership in the web server cluster](#task-2)</br>
+	3 - [React to membership changes](#task-3)</br>
+	4 - [Use a template engine to easily generate configuration files](#task-4)</br>
+	5 - [Generate a new load balancer configuration when membership changes](#task-5)</br>
+	6 - [Make the load balancer automatically reload the new configuration](#task-6)</br>
 
 3. [Difficulties](#difficulties)
 4. [Conclusion](#conclusion)
@@ -82,7 +82,7 @@ give in your report the reference of the question you are answering.
 
 2. <a name="M2"></a>**[M2]** Describe what you need to do to add new `webapp` container to the infrastructure. Give the exact steps of what you have to do without modifiying the way the things are done. Hint: You probably have to modify some configuration and script files in a Docker image.
 
-	**1. Add webapp3 service  in `docker-compose.yml` : **
+	**1. Add webapp3 service  in `docker-compose.yml` :**
 	```bash
 	...
 	webapp3:
@@ -97,23 +97,26 @@ give in your report the reference of the question you are answering.
          - "4002:3000"
        environment:
             - TAG=${WEBAPP_3_NAME}
-            - SERVER_IP=${WEBAPP_3_IP} 
-     ...```
+            - SERVER_IP=${WEBAPP_3_IP}
+	...
+	```
 	
-	**2. Add, in the `.env` file, the environment variables used in the docker-compose : **
+	**2. Add, in the `.env` file, the environment variables used in the docker-compose :**
 	``` bash
 	...
 	WEBAPP_3_NAME=s3
 	WEBAPP_3_IP=192.168.42.33
-	...```
+	...
+	```
 	**3. Add this line in `haproxy.cfg` :**
 	
 	`server s3 ${WEBAPP_3_IP}:3000 check cookie s3`
 	
-	**4. Finally down the docker-compose and re-build images : **
+	**4. Finally down the docker-compose and re-build images :**
 	```bash
 	docker-compose down
-	docker-compose up --build```
+	docker-compose up --build
+	```
 	
 3. <a name="M3"></a>**[M3]** Based on your previous answers, you have detected some issues in the current solution. Now propose a better approach at a high level.
 
@@ -121,8 +124,7 @@ give in your report the reference of the question you are answering.
 
 4. <a name="M4"></a>**[M4]** You probably noticed that the list of web application nodes is hardcoded in the load balancer configuration. How can we manage the web app nodes in a more dynamic fashion?
 
-	**  We can make our infrastructure more
-flexible and dynamically add and remove web servers. To achieve this goal, we have to use a tool that allows each node to know which other nodes exist at any given time. **
+	**We can make our infrastructure more flexible and dynamically add and remove web servers. To achieve this goal, we have to use a tool that allows each node to know which other nodes exist at any given time.**
 
 5. <a name="M5"></a>**[M5]** In the physical or virtual machines of a typical infrastructure we tend to have not only one main process (like the web server or the load balancer) running, but a few additional processes on the side to perform management tasks.
 
@@ -130,13 +132,13 @@ flexible and dynamically add and remove web servers. To achieve this goal, we ha
 
    Do you think our current solution is able to run additional management processes beside the main web server / load balancer process in a container? If no, what is missing / required to reach the goal? If yes, how to proceed to run for example a log forwarding process?
    
-   ** Actually our current solution isn't able to run additional management processes beside the main process because the Docker design limits one process per container. To reach the goal, we need to start a process supervisor which can run several processes.**
+   **Actually our current solution isn't able to run additional management processes beside the main process because the Docker design limits one process per container. To reach the goal, we need to start a process supervisor which can run several processes.**
 
 6. <a name="M6"></a>**[M6]** In our current solution, although the load balancer configuration is changing dynamically, it doesn't follow dynamically the configuration of our distributed system when web servers are added or removed. If we take a closer look at the `run.sh` script, we see two calls to `sed` which will replace two lines in the `haproxy.cfg` configuration file just before we start `haproxy`. You clearly see that the configuration file has two lines and the script will replace these two lines.
 
    What happens if we add more web server nodes? Do you think it is really dynamic? It's far away from being a dynamic configuration. Can you propose a solution to solve this?
    
-   ** In `run.sh`, we see that the `sed` calls replace two lines in the HAProy config before  starting, but if we want to add node after starting the lines will never be added to the configuration. It's not dynamic. A deamon could monitor the network, if a new node is detected it will modify the configuration of HAProxy.  **
+   **In `run.sh`, we see that the `sed` calls replace two lines in the HAProy config before  starting, but if we want to add node after starting the lines will never be added to the configuration. It's not dynamic. A deamon could monitor the network, if a new node is detected it will modify the configuration of HAProxy.**
 
 #### Install the tools
 
@@ -150,7 +152,7 @@ flexible and dynamically add and remove web servers. To achieve this goal, we ha
 
 2. Give the URL of your repository URL in the lab report.
 	
-	You will find our repository here : https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker
+	**You will find our repository here : https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker**
 
 
 ### <a name="task-1"></a>Task 1: Add a process supervisor to run several processes
@@ -159,15 +161,13 @@ flexible and dynamically add and remove web servers. To achieve this goal, we ha
 
 **Deliverables**:
 
-1. Take a screenshot of the stats page of HAProxy at
-   <http://192.168.42.42:1936>. You should see your backend nodes. It should be really similar to the screenshot of the previous task.
+1. Take a screenshot of the stats page of HAProxy at <http://192.168.42.42:1936>. You should see your backend nodes. It should be really similar to the screenshot of the previous task.
    
 	![](assets/img/stat-page-hap-bis.png)
 
 2. Describe your difficulties for this task and your understanding of what is happening during this task. Explain in your own words why are we installing a process supervisor. Do not hesitate to do more research and to find more articles on that topic to illustrate the problem.
 
-	**In this task, we understand that we have modified our docker images to bypass the docker limitation in order to run multiple processes in our container.
-	We didn't have any difficulties except an error when we changed the hash-bang. We modified `#!/bin/sh` by `#!/bin/with-contenv bash` instead of `#!/usr/bin/with-contenv bash` what caused this error at startup : **
+	**In this task, we understand that we have modified our docker images to bypass the docker limitation in order to run multiple processes in our container. We didn't have any difficulties except an error when we changed the hash-bang. We modified `#!/bin/sh` by `#!/bin/with-contenv bash` instead of `#!/usr/bin/with-contenv bash` what caused this error at startup :**
 	
 	![](assets/img/error-script-headers.png)
 	
@@ -195,25 +195,23 @@ which other nodes exist at any given time.
        |-- ...
    ```
    
-   ** You will find the logs for this task [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task2) **
+   **You will find the logs for this task [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task2)**
 
 2. Give the answer to the question about the existing problem with the current solution.
    
-   **In our case there is no existing problem.. We've tried to start HAProxy first and after start s1. No error occurred neither in ha nor in s1. We can also ping s1 from ha.   ** 
+   **In our case there is no existing problem.. We've tried to start HAProxy first and after start s1. No error occurred neither in ha nor in s1. We can also ping s1 from ha.** 
    
    **HAProxy logs and ping :**
    
 	![](assets/img/ping-complete-screen.png)
 
-	** s1 logs : **
+	**s1 logs :**
 	
 	![](assets/img/ping-log-s1.png)
 
 3. Give an explanation on how `Serf` is working. Read the official website to get more details about the `GOSSIP` protocol used in `Serf`. Try to find other solutions that can be used to solve similar situations where we need some auto-discovery mechanism.
    
-   **According to [github repo](https://github.com/hashicorp/serf), Serf is a decentralized solution for service discovery and orchestration that is lightweight (it uses 5 to 10 MB of resident memory), highly available, and fault tolerant.
-   Serf can notify the rest of the cluster if  a node failure is detected To communicate with other nodes, an efficient and lightweight gossip protocol is used. The Serf agents periodically exchange messages with each other. As an example, HashiCorp (the Serf developpers) made an analogy with a zombie apocalypse : *it starts with one zombie but soon infects everyone*.
-   Consul, Zookeeper and etcd are the most popular alternatives and competitors to Serf.**
+   **According to [github repo](https://github.com/hashicorp/serf), Serf is a decentralized solution for service discovery and orchestration that is lightweight (it uses 5 to 10 MB of resident memory), highly available, and fault tolerant. Serf can notify the rest of the cluster if  a node failure is detected To communicate with other nodes, an efficient and lightweight gossip protocol is used. The Serf agents periodically exchange messages with each other. As an example, HashiCorp (the Serf developpers) made an analogy with a zombie apocalypse : *it starts with one zombie but soon infects everyone*. Consul, Zookeeper and etcd are the most popular alternatives and competitors to Serf.**
 
 
 ### <a name="task-3"></a>Task 3: React to membership changes
@@ -223,134 +221,16 @@ which other nodes exist at any given time.
 
 We reached a state where we have nearly all the pieces in place to make the infrastructure really dynamic. At the moment, we are missing the scripts that will react to the events reported by `Serf`, namely member `leave` or member `join`.
 
-We will start by creating the scripts in [ha/scripts](ha/scripts). So create two files in
-this directory and set them as executable. You can use these commands:
-
-```bash
-touch /ha/scripts/member-join.sh && chmod +x /ha/scripts/member-join.sh
-touch /ha/scripts/member-leave.sh && chmod +x /ha/scripts/member-leave.sh
-```
-
-In the `member-join.sh` script, put the following content:
-
-```bash
-#!/usr/bin/env bash
-
-echo "Member join script triggered" >> /var/log/serf.log
-
-# We iterate over stdin
-while read -a values; do
-  # We extract the hostname, the ip, the role of each line and the tags
-  HOSTNAME=${values[0]}
-  HOSTIP=${values[1]}
-  HOSTROLE=${values[2]}
-  HOSTTAGS=${values[3]}
-
-  echo "Member join event received from: $HOSTNAME with role $HOSTROLE" >> /var/log/serf.log
-done
-```
-
-Do the same for the `member-leave.sh` with the following content:
-
-```bash
-#!/usr/bin/env bash
-
-echo "Member leave/join script triggered" >> /var/log/serf.log
-
-# We iterate over stdin
-while read -a values; do
-  # We extract the hostname, the ip, the role of each line and the tags
-  HOSTNAME=${values[0]}
-  HOSTIP=${values[1]}
-  HOSTROLE=${values[2]}
-  HOSTTAGS=${values[3]}
-
-  echo "Member $SERF_EVENT event received from: $HOSTNAME with role $HOSTROLE" >> /var/log/serf.log
-done
-```
-
-We have to update our Docker file for `ha` node. Replace the
-`TODO: [Serf] Copy events handler scripts` with appropriate content to:
-
-  1. Make sure there is a directory `/serf-handlers`.
-  2. The `member-join` and `member-leave` scripts are placed in this folder.
-  3. Both of the scripts are executable.
-
-Stop all your containers to have a fresh state:
-
-```bash
-docker rm -f ha s1 s2
-```
-
-Now, build your `ha` image:
-
-```bash
-# Build the haproxy image
-cd /ha
-docker build -t <imageName> .
-```
-
-From now on, we will ask you to systematically keep the logs and copy
-them into your repository as a lab deliverable.  Whenever you see the
-notice (**keep logs**) after a command, copy the logs into the
-repository.
-
-Run the `ha` container first and capture the logs with `docker logs` (**keep the logs**).
-
-```bash
-docker run -d -p 80:80 -p 1936:1936 -p 9999:9999 --network heig --name ha <imageName>
-```
-
-Now, run one of the two backend containers and capture the logs (**keep the logs**). Shortly after
-starting the container capture also the logs of the `ha` node (**keep the logs**).
-
-```bash
-docker run -d --network heig --name s1 <imageName>
-docker run -d --network heig --name s2 <imageName>
-```
-
-**Remarks**:
-
-  - You probably noticed that we removed the `links` to container `s1` and `s2`.
-    The reason is that we will not rely on that mechanism for the next steps. For
-    the moment the communication between the reverse proxy and the backend
-    nodes is broken.
-
-Once started, get the logs (**keep the logs**) of the backend container.
-
-To check there is something happening on the node `ha` you will need to connect
-to the running container to gather the custom log file that is created in the
-handler scripts. For that, use the following command to connect to `ha`
-container in interactive mode.
-
-```bash
-docker exec -ti ha /bin/bash
-```
-
-**References**:
-
-  - [docker exec](https://docs.docker.com/engine/reference/commandline/exec/)
-
-Once done, you can simply run the following command. This command is run inside
-the running `ha` container. (**keep the logs**)
-
-```bash
-cat /var/log/serf.log
-```
-
-Once you have finished, you have simply to type `exit` in the container to quit
-your shell session and at the same time the container. The container itself will
-continue to run.
-
 **Deliverables**:
 
 1. Provide the docker log output for each of the containers:  `ha`, `s1` and `s2`.
    Put your logs in the `logs` directory you created in the previous task.
    
-   ** You will find the ha, s1 and s2 logs [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task3) **
+   **You will find the ha, s1 and s2 logs [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task3)**
 
 2. Provide the logs from the `ha` container gathered directly from the `/var/log/serf.log` file present in the container. Put the logs in the `logs` directory in your repo.
-   ** You will find the content of the `/var/log/serf.log` file [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task3/serf.log) **
+
+   **You will find the content of the `/var/log/serf.log` file [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task3/serf.log)**
 
 
 ### <a name="task-4"></a>Task 4: Use a template engine to easily generate configuration files
@@ -387,36 +267,35 @@ There are several ways to generate a configuration file from variables in a dyna
 RUN apt-get update
 RUN apt-get install -y curl
 ```
-** Here the first RUN is done the first time but after it will be cached. Now if we want add a new package like node our image become :** 
+**Here the first RUN is done the first time but after it will be cached. Now if we want add a new package like node our image become :** 
 ```bash
   FROM ubuntu:18.04
 RUN apt-get update
 RUN apt-get install -y curl node
 ```
 **So it won't update the repo sources and the packages version might be outdated.</br>
-On the other hand, merge RUN commands will ignore the cache for each modification in the line. For example : **
+On the other hand, merge RUN commands will ignore the cache for each modification in the line. For example :**
 ```bash
   FROM ubuntu:18.04
 RUN apt-get update && apt-get install -y curl && curl https://www.google.com
 ```
-** If we just modify the curl command (now we want curl on heig-vd.ch) and re-build the image it will re-update the version of packages from the repo and re-install curl and finally do the curl.</br>
+**If we just modify the curl command (now we want curl on heig-vd.ch) and re-build the image it will re-update the version of packages from the repo and re-install curl and finally do the curl.</br>
 Both usages have pro and cons.</br>
-docker-squash is a utility to squash multiple docker layers into one in order to create an image with fewer and smaller layers. It retains Dockerfile commands such as PORT, ENV, etc.. so that squashed images work the same as they were originally built. In addition, deleted files in later layers are actually purged from the image when squashed.
-**
+docker-squash is a utility to squash multiple docker layers into one in order to create an image with fewer and smaller layers. It retains Dockerfile commands such as PORT, ENV, etc.. so that squashed images work the same as they were originally built. In addition, deleted files in later layers are actually purged from the image when squashed.**
 
 2. Propose a different approach to architecture our images to be able to reuse as much as possible what we have done. Your proposition should also try to avoid as much as possible repetitions between your images.
 
-	**In this lab, we have two images : the haproxy and the webapp. This two images have some commons things. In both of them we have installed Serf, S6 and Node (one by inheritance and one manually). This commons things could be combined in a `super-image` to avoid repetitions. **
+	**In this lab, we have two images : the haproxy and the webapp. This two images have some commons things. In both of them we have installed Serf, S6 and Node (one by inheritance and one manually). This commons things could be combined in a `super-image` to avoid repetitions.**
 
 3. Provide the `/tmp/haproxy.cfg` file generated in the `ha` container after each step.  Place the output into the `logs` folder like you already did for the Docker logs in the previous tasks. Three files are expected.
    
    In addition, provide a log file containing the output of the `docker ps` console and another file (per container) with `docker inspect <container>`. Four files are expected.
    
-   ** You will find the docker outputs and logs [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task4) **
+   **You will find the docker outputs and logs [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task4)**
    
 4. Based on the three output files you have collected, what can you say about the way we generate it? What is the problem if any?
 
-	** TODO, pas compris**
+	**TODO, pas compris**
 
 
 ### <a name="task-5"></a>Task 5: Generate a new load balancer configuration when membership changes
@@ -435,23 +314,23 @@ Now, we need to refine our `join` and `leave` scripts to generate a proper HAPro
 
 1. Provide the file `/usr/local/etc/haproxy/haproxy.cfg` generated in the `ha` container after each step. Three files are expected.
    
-   ** You will find the docker outputs, list of files of `/nodes` folder and config files [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task5/) **
+   **You will find the docker outputs, list of files of `/nodes` folder and config files [here.](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task5/)**
    
    In addition, provide a log file containing the output of the 
    `docker ps` console and another file (per container) with
    `docker inspect <container>`. Four files are expected.
 
-	** Idem.**
+	**Idem.**
 2. Provide the list of files from the `/nodes` folder inside the `ha` container.
    One file expected with the command output.
    
-  	** Idem.**
+  	**Idem.**
 
 3. Provide the configuration file after you stopped one container and the list of nodes present in the `/nodes` folder. One file expected with the command output. Two files are expected.
    
     In addition, provide a log file containing the output of the `docker ps` console. One file expected.
 
-	** Idem.**
+	**Idem.**
 
 ### <a name="task-6"></a>Task 6: Make the load balancer automatically reload the new configuration
 
@@ -473,12 +352,12 @@ downtime.
    
    Also provide the output of `docker ps` in a log file. At least one file is expected. You can provide one output per step of your experimentation according to your screenshots.
    
-   ** HAProxy stat page and `docker ps` output when : **
+   **HAProxy stat page and `docker ps` output when :**
     - no backend are started : 
    
    	![](assets/img/hap-step0.png)
    
-   	[docker ps output]((https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task6/docker/docker-ps-step0)
+   	[docker ps output](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task6/docker/docker-ps-step0)
 	- 4 backend are started : 
    
    	![](assets/img/hap-step1.png)
@@ -489,11 +368,11 @@ downtime.
    
    	![](assets/img/hap-step2.png)
    
-   	[docker ps output]((https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task6/docker/docker-ps-step2)
+   	[docker ps output](https://github.com/AdamZouari/AIT_Labos/tree/master/labo4-docker/Teaching-HEIGVD-AIT-2019-Labo-Docker/logs/task6/docker/docker-ps-step2)
 	
 2. Give your own feelings about the final solution. Propose improvements or ways to do the things differently. If any, provide references to your readings for the improvements.
 
-	** The final solution is pretty good in developpement but in production we could like to automatically add/remove nodes if the load increase/decrease. **
+	**The final solution is pretty good in developpement but in production we could like to automatically add/remove nodes if the load increase/decrease.**
 	
 3. (Optional:) Present a live demo where you add and remove a backend container.
 	
