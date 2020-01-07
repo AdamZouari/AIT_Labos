@@ -384,5 +384,5 @@ downtime.
 
 ## <a name="conclusion"></a> Conclusion
 
-#TODO
+This laboratory was very interesting. We were able to see many feature in order to automate as many as possible the infrastructure. We found it very useful as Docker is a technology used more and more in the industry. 
 
