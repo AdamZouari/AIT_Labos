@@ -18,7 +18,6 @@ __Authors : Nair Alic & Adam Zouari__
 3. [Difficulties](#difficulties)
 4. [Conclusion](#conclusion)
 
-
 * * *
 
 **DISCLAIMER**: In this lab, we will go through one possible approach
@@ -29,7 +28,7 @@ tools and services to achieve the same kind of behavior.
 
 ## <a name="intro"></a>Introduction
 
-# TODO
+In this laboratory, we will see how to manage scalable infrastructure using Docker and HAProxy like in the previous lab. During all the lab, we have to test many different feature. The lab have 6 tasks. On the first one we had to add a process supervisor to run several processes. Then we added a tool to manage membership in the web server cluster. And after that we check how to react to to membership changes. We will also use a template engine to easily generate configuration files and generate a new load balancer configuration when membership changes. And finally we will make the load balancer automatically reload the new configuration to in order to have an automated infrastructure.
 
 ## <a name="tasks"></a>Tasks
 
@@ -259,14 +258,14 @@ There are several ways to generate a configuration file from variables in a dyna
   ```
 
   There are also some articles about techniques to reduce the image size. Try to find them. They are talking about `squashing` or `flattening` images.
-  
+
   **The RUN instruction will execute any commands in a new layer on top of the current image and commit the results. </br>
   On the one hand, decrease the number of RUN commands will decrease the number of layers and the image size. Moreover, multiple RUN commands can causes caching issues. For example :**
   ```bash
   FROM ubuntu:18.04
 RUN apt-get update
 RUN apt-get install -y curl
-```
+  ```
 **Here the first RUN is done the first time but after it will be cached. Now if we want add a new package like node our image become :** 
 ```bash
   FROM ubuntu:18.04
@@ -324,6 +323,7 @@ Now, we need to refine our `join` and `leave` scripts to generate a proper HAPro
 2. Provide the list of files from the `/nodes` folder inside the `ha` container.
    One file expected with the command output.
    
+
   	**Idem.**
 
 3. Provide the configuration file after you stopped one container and the list of nodes present in the `/nodes` folder. One file expected with the command output. Two files are expected.
@@ -372,7 +372,7 @@ downtime.
 	
 2. Give your own feelings about the final solution. Propose improvements or ways to do the things differently. If any, provide references to your readings for the improvements.
 
-	**The final solution is pretty good in developpement but in production we could like to automatically add/remove nodes if the load increase/decrease.**
+	**The final solution is pretty good in development but in production we would like to automatically add/remove nodes if the load increase/decrease.**
 	
 3. (Optional:) Present a live demo where you add and remove a backend container.
 	
