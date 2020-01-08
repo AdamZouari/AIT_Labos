@@ -15,7 +15,6 @@ __Authors : Nair Alic & Adam Zouari__
 	5 - [Generate a new load balancer configuration when membership changes](#task-5)</br>
 	6 - [Make the load balancer automatically reload the new configuration](#task-6)</br>
 
-3. [Difficulties](#difficulties)
 4. [Conclusion](#conclusion)
 
 * * *
@@ -294,7 +293,7 @@ docker-squash is a utility to squash multiple docker layers into one in order to
    
 4. Based on the three output files you have collected, what can you say about the way we generate it? What is the problem if any?
 
-	**TODO, pas compris**
+	**The content of the file haproxy.cfg is overwritten. It only contains the id and the ip of the last node who joined the cluster. We should append data in the file instead of overwrite it.**
 
 
 ### <a name="task-5"></a>Task 5: Generate a new load balancer configuration when membership changes
@@ -323,8 +322,7 @@ Now, we need to refine our `join` and `leave` scripts to generate a proper HAPro
 2. Provide the list of files from the `/nodes` folder inside the `ha` container.
    One file expected with the command output.
    
-
-  	**Idem.**
+	**Idem.**
 
 3. Provide the configuration file after you stopped one container and the list of nodes present in the `/nodes` folder. One file expected with the command output. Two files are expected.
    
@@ -378,9 +376,6 @@ downtime.
 	
 	**With pleasure if needed.**
 
-## <a name="difficulties"></a> Difficulties
-
-#TODO
 
 ## <a name="conclusion"></a> Conclusion
 
